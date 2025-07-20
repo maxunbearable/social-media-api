@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException
-from api.models.post import Comment, CommentInput, UserPost, UserPostInput
+from api.models.post import Comment, CommentInput, UserPost, UserPostInput, UserPostWithComments
 
 router = APIRouter()
 
 post_table = {}
 comment_table = {}
 
-def find_post(post_id: int):
+def find_post(post_id: int) -> UserPost | None:
     return post_table.get(post_id)
 
 @router.post("/comment", response_model=Comment, status_code=201)
@@ -37,9 +37,13 @@ async def create_post(post: UserPostInput):
     post_table[post_id] = new_post
     return new_post
 
-@router.get("/post/{post_id}", response_model=UserPost)
-async def get_post(post_id: int):
-    return find_post(post_id)
+@router.get("/post/{post_id}", response_model=UserPostWithComments)
+async def get_post_with_comments(post_id: int):
+    post = find_post(post_id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    comments = await get_comments(post_id)
+    return UserPostWithComments(post=post, comments=comments)
 
 @router.get("/posts", response_model=list[UserPost])
 async def get_posts():

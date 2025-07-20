@@ -13,6 +13,6 @@ class CommentInput(BaseModel):
 class Comment(CommentInput):
     id: int
 
-class UserPostWithComments(UserPost):
-    comments: list[Comment]
+class UserPostWithComments(BaseModel):
     post: UserPost
+    comments: list[Comment]

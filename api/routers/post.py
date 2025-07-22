@@ -33,7 +33,7 @@ async def get_comments(post_id: int):
 async def create_post(post: UserPostInput):
     data = post.model_dump()
     post_id = len(post_table)
-    new_post = UserPost(id=len(post_table), **data)
+    new_post = {**data, "id": post_id}
     post_table[post_id] = new_post
     return new_post
 

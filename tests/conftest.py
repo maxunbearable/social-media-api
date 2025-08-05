@@ -4,11 +4,11 @@ from typing import AsyncGenerator, Generator
 import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
+from api.database import database, post_table, comment_table
 
 os.environ["ENV_STATE"] = "test"
 
 from api.main import app
-from api.routers.post import comment_table, post_table
 
 
 @pytest.fixture(scope="session")
@@ -23,8 +23,15 @@ def client() -> Generator:
 
 @pytest.fixture(autouse=True)
 async def db() -> AsyncGenerator:
-    post_table.clear()
-    comment_table.clear()
+    await database.connect()
+    yield
+    await database.disconnect()
+
+
+@pytest.fixture(autouse=True)
+async def clean_db() -> AsyncGenerator:
+    await database.execute(comment_table.delete())
+    await database.execute(post_table.delete())
     yield
 
 

@@ -1,0 +1,18 @@
+2025-08-09 14:40:10 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-09 14:40:48 INFO     uvicorn.access:476 - 127.0.0.1:50767 - "GET /docs HTTP/1.1" 200
+2025-08-09 14:41:18 INFO     uvicorn.error:264 - Shutting down
+2025-08-09 14:41:18 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-09 14:41:18 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-09 14:41:18 INFO     uvicorn.error:94 - Finished server process [7001]
+2025-08-09 14:41:18 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-09 14:42:36 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-09 14:42:48 INFO     uvicorn.error:264 - Shutting down
+2025-08-09 14:42:48 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-09 14:42:48 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-09 14:42:48 INFO     uvicorn.error:94 - Finished server process [7933]
+2025-08-09 14:42:49 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-09 14:43:11 INFO     uvicorn.error:264 - Shutting down
+2025-08-09 14:43:11 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-09 14:43:11 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-09 14:43:11 INFO     uvicorn.error:94 - Finished server process [7938]
+2025-08-09 14:43:11 INFO     uvicorn.error:62 - Application startup complete.

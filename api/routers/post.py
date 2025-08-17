@@ -18,7 +18,6 @@ async def create_comment(comment: CommentInput):
     post_id = comment.post_id
     post = await find_post(post_id)
     if not post:
-        logger.error(f"Post not found for post_id: {post_id}")
         raise HTTPException(status_code=404, detail="Post not found")
     
     data = comment.model_dump()
@@ -32,7 +31,6 @@ async def get_comments(post_id: int):
     logger.info(f"Getting comments for post_id: {post_id}")
     post = await find_post(post_id)
     if not post:
-        logger.error(f"Post not found for post_id: {post_id}")
         raise HTTPException(status_code=404, detail="Post not found")
     query = comment_table.select().where(comment_table.c.post_id == post_id)
     logger.debug(query)
@@ -52,7 +50,6 @@ async def get_post_with_comments(post_id: int):
     logger.info(f"Getting post with comments for post_id: {post_id}")
     post = await find_post(post_id)
     if not post:
-        logger.error(f"Post not found for post_id: {post_id}")
         raise HTTPException(status_code=404, detail="Post not found")
     comments = await get_comments(post_id)
     return UserPostWithComments(post=post, comments=comments)

@@ -14,16 +14,23 @@ def configure_logging():
         {
             "version": 1,
             "disable_existing_loggers": False,
+            "filters": {
+                "correlation_id": {
+                    "()": "asgi_correlation_id.CorrelationIdFilter",
+                    "uuid_length": 8 if is_dev else 32,
+                    "default_value": "-",
+                },
+            },
             "formatters": {
                 "console": {
                     "class": "logging.Formatter",
                     "datefmt": "%Y-%m-%d %H:%M:%S",
-                    "format": "%(asctime)s %(levelname)-8s %(name)s - %(message)s",
+                    "format": "(%(correlation_id)s) %(asctime)s %(levelname)-8s %(name)s - %(message)s",
                 },
                 "file": {
                     "class": "logging.Formatter",
                     "datefmt": "%Y-%m-%d %H:%M:%S",
-                    "format": "%(asctime)s %(levelname)-8s %(name)s:%(lineno)d - %(message)s",
+                    "format": "%(asctime)s %(levelname)-8s (%(correlation_id)s) %(name)s:%(lineno)d - %(message)s",
                 },
             },
             "handlers": {
@@ -31,6 +38,7 @@ def configure_logging():
                     "class": "logging.StreamHandler",
                     "level": "DEBUG" if is_dev else "INFO",
                     "formatter": "console",
+                    "filters": ["correlation_id"],
                 },
                 "rotating_file": {
                     "class": "logging.handlers.RotatingFileHandler",
@@ -40,6 +48,7 @@ def configure_logging():
                     "maxBytes": 5 * 1024 * 1024,
                     "backupCount": 5,
                     "encoding": "utf-8",
+                    "filters": ["correlation_id"],
                 },
             },
             "root": {

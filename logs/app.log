@@ -129,3 +129,31 @@ FROM posts
 2025-08-17 17:02:17 INFO     uvicorn.error:76 - Application shutdown complete.
 2025-08-17 17:02:17 INFO     uvicorn.error:94 - Finished server process [41925]
 2025-08-17 17:02:17 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 17:04:22 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 17:04:22 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 17:04:22 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 17:04:22 INFO     uvicorn.error:94 - Finished server process [41951]
+2025-08-17 17:04:23 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 17:05:31 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 17:05:32 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 17:05:32 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 17:05:32 INFO     uvicorn.error:94 - Finished server process [42123]
+2025-08-17 17:09:31 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 17:09:59 INFO     api.routers.post:59 - Getting all posts
+2025-08-17 17:09:59 INFO     api.routers.post:61 - SELECT posts.id, posts.body 
+FROM posts
+2025-08-17 17:09:59 INFO     uvicorn.access:476 - 127.0.0.1:50127 - "GET /posts HTTP/1.1" 200
+2025-08-17 17:10:44 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 17:10:44 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 17:10:44 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 17:10:44 INFO     uvicorn.error:94 - Finished server process [42574]
+2025-08-17 17:11:58 INFO     (-) uvicorn.error:62 - Application startup complete.
+2025-08-17 17:12:09 INFO     (df82ea2a) api.routers.post:59 - Getting all posts
+2025-08-17 17:12:09 INFO     (df82ea2a) api.routers.post:61 - SELECT posts.id, posts.body 
+FROM posts
+2025-08-17 17:12:09 INFO     (df82ea2a) uvicorn.access:476 - 127.0.0.1:50158 - "GET /posts HTTP/1.1" 200
+2025-08-17 17:12:19 INFO     (-) uvicorn.error:264 - Shutting down
+2025-08-17 17:12:19 INFO     (-) uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 17:12:19 INFO     (-) uvicorn.error:76 - Application shutdown complete.
+2025-08-17 17:12:19 INFO     (-) uvicorn.error:94 - Finished server process [42868]
+2025-08-17 17:12:19 INFO     (-) uvicorn.error:62 - Application startup complete.

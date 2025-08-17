@@ -16,3 +16,106 @@
 2025-08-09 14:43:11 INFO     uvicorn.error:76 - Application shutdown complete.
 2025-08-09 14:43:11 INFO     uvicorn.error:94 - Finished server process [7938]
 2025-08-09 14:43:11 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:32:37 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:33:06 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:33:06 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:33:06 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:33:06 INFO     uvicorn.error:94 - Finished server process [40664]
+2025-08-17 16:33:06 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:33:17 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:33:17 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:33:17 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:33:17 INFO     uvicorn.error:94 - Finished server process [40887]
+2025-08-17 16:33:18 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:34:04 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:34:04 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:34:04 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:34:04 INFO     uvicorn.error:94 - Finished server process [40902]
+2025-08-17 16:34:05 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:34:16 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:34:17 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:34:17 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:34:17 INFO     uvicorn.error:94 - Finished server process [40923]
+2025-08-17 16:34:17 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:36:57 DEBUG    api.routers.post:52 - SELECT posts.id, posts.body 
+FROM posts
+2025-08-17 16:36:57 INFO     uvicorn.access:476 - 127.0.0.1:49497 - "GET /posts HTTP/1.1" 200
+2025-08-17 16:39:20 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:39:20 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:39:20 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:39:20 INFO     uvicorn.error:94 - Finished server process [40937]
+2025-08-17 16:39:20 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:39:28 INFO     api.routers.post:50 - Getting posts
+2025-08-17 16:39:28 INFO     api.routers.post:52 - SELECT posts.id, posts.body 
+FROM posts
+2025-08-17 16:39:28 INFO     uvicorn.access:476 - 127.0.0.1:49571 - "GET /posts HTTP/1.1" 200
+2025-08-17 16:39:45 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:39:45 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:39:45 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:39:45 INFO     uvicorn.error:94 - Finished server process [41084]
+2025-08-17 16:39:45 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:40:49 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:40:49 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:40:49 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:40:49 INFO     uvicorn.error:94 - Finished server process [41112]
+2025-08-17 16:40:49 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:40:58 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:40:58 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:40:58 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:40:58 INFO     uvicorn.error:94 - Finished server process [41134]
+2025-08-17 16:40:58 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:41:03 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:41:03 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:41:03 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:41:03 INFO     uvicorn.error:94 - Finished server process [41146]
+2025-08-17 16:41:03 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:41:07 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:41:07 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:41:07 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:41:07 INFO     uvicorn.error:94 - Finished server process [41155]
+2025-08-17 16:41:07 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:41:14 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:41:14 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:41:14 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:41:14 INFO     uvicorn.error:94 - Finished server process [41166]
+2025-08-17 16:41:15 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:41:21 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:41:21 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:41:21 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:41:21 INFO     uvicorn.error:94 - Finished server process [41174]
+2025-08-17 16:41:21 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:41:34 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:41:34 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:41:34 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:41:34 INFO     uvicorn.error:94 - Finished server process [41185]
+2025-08-17 16:41:34 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:41:39 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:41:39 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:41:39 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:41:39 INFO     uvicorn.error:94 - Finished server process [41198]
+2025-08-17 16:41:39 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:41:44 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:41:44 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:41:44 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:41:44 INFO     uvicorn.error:94 - Finished server process [41207]
+2025-08-17 16:41:45 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:43:15 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:43:15 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:43:15 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:43:15 INFO     uvicorn.error:94 - Finished server process [41214]
+2025-08-17 16:43:16 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:43:22 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:43:22 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:43:22 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:43:22 INFO     uvicorn.error:94 - Finished server process [41347]
+2025-08-17 16:43:22 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:43:26 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:43:26 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:43:26 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:43:26 INFO     uvicorn.error:94 - Finished server process [41357]
+2025-08-17 16:43:27 INFO     uvicorn.error:62 - Application startup complete.
+2025-08-17 16:43:49 INFO     uvicorn.error:264 - Shutting down
+2025-08-17 16:43:49 INFO     uvicorn.error:67 - Waiting for application shutdown.
+2025-08-17 16:43:49 INFO     uvicorn.error:76 - Application shutdown complete.
+2025-08-17 16:43:49 INFO     uvicorn.error:94 - Finished server process [41367]
+2025-08-17 16:43:49 INFO     uvicorn.error:62 - Application startup complete.

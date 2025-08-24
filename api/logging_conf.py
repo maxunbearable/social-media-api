@@ -1,8 +1,23 @@
+import logging
 from logging.config import dictConfig
 from pathlib import Path
 
 from api.config import config as app_config, DevConfig
 
+def obfuscated(value: str, length: int) -> str:
+    characters = value[:length]
+    first, last = characters.split("@")
+    return characters + ("*" * (len(first) - length)) + "@" + last
+
+class EmailObfuscationFilter(logging.Filter):
+    def __init__(self, name: str, obfuscated_length: int = 4):
+        super().__init__(name)
+        self.obfuscated_length = obfuscated_length
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        if "email" in record.__dict__:
+            record.email = obfuscated(record.email, self.obfuscated_length)
+        return True
 
 def configure_logging():
     logs_dir = Path(__file__).resolve().parent.parent / "logs"
@@ -19,6 +34,10 @@ def configure_logging():
                     "()": "asgi_correlation_id.CorrelationIdFilter",
                     "uuid_length": 8 if is_dev else 32,
                     "default_value": "-",
+                },
+                "email": {
+                    "()": EmailObfuscationFilter,
+                    "obfuscated_length": 2 if is_dev else 4,
                 },
             },
             "formatters": {
@@ -38,7 +57,7 @@ def configure_logging():
                     "class": "logging.StreamHandler",
                     "level": "DEBUG" if is_dev else "INFO",
                     "formatter": "console",
-                    "filters": ["correlation_id"],
+                    "filters": ["correlation_id", "email"],
                 },
                 "rotating_file": {
                     "class": "logging.handlers.RotatingFileHandler",

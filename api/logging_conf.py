@@ -5,9 +5,15 @@ from pathlib import Path
 from api.config import config as app_config, DevConfig
 
 def obfuscated(value: str, length: int) -> str:
+    if "@" not in value:
+        return value[:length] + "*" * (len(value) - length)
+    
     characters = value[:length]
-    first, last = characters.split("@")
-    return characters + ("*" * (len(first) - length)) + "@" + last
+    if "@" not in characters:
+        return characters + "*" * (len(value) - length)
+    
+    first, last = characters.split("@", 1)
+    return first + ("*" * (len(value) - length)) + "@" + last
 
 class EmailObfuscationFilter(logging.Filter):
     def __init__(self, name: str, obfuscated_length: int = 4):
@@ -37,6 +43,7 @@ def configure_logging():
                 },
                 "email": {
                     "()": EmailObfuscationFilter,
+                    "name": "email",
                     "obfuscated_length": 2 if is_dev else 4,
                 },
             },
@@ -69,27 +76,39 @@ def configure_logging():
                     "encoding": "utf-8",
                     "filters": ["correlation_id"],
                 },
+                "logtail": {
+                    "class": "logtail.LogtailHandler",
+                    "level": "DEBUG" if is_dev else "INFO",
+                    "formatter": "console",
+                    "filters": ["correlation_id", "email"],
+                    "source_token": app_config.LOGTAIL_API_KEY,
+                    "host": "https://s1486720.eu-nbg-2.betterstackdata.com",
+                },
             },
             "root": {
-                "handlers": ["default", "rotating_file"],
+                "handlers": ["default", "rotating_file", "logtail"],
                 "level": "DEBUG" if is_dev else "INFO",
             },
             "loggers": {
                 "api": {
-                    "handlers": ["default", "rotating_file"],
+                    "handlers": ["default", "rotating_file", "logtail"],
                     "level": "DEBUG" if is_dev else "INFO",
                     "propagate": False,
                 },
                 "uvicorn": {
-                    "handlers": ["default", "rotating_file"],
+                    "handlers": ["default", "rotating_file", "logtail"],
                     "level": "INFO",
                 },
                 "databases": {
-                    "handlers": ["default", "rotating_file"],
+                    "handlers": ["default", "rotating_file", "logtail"],
                     "level": "WARNING",
                 },
                 "aiosqlite": {
-                    "handlers": ["default", "rotating_file"],
+                    "handlers": ["default", "rotating_file", "logtail"],
+                    "level": "WARNING",
+                },
+                "urllib3": {
+                    "handlers": ["default", "rotating_file", "logtail"],
                     "level": "WARNING",
                 },
             },

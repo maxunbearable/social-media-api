@@ -25,6 +25,8 @@ class EmailObfuscationFilter(logging.Filter):
             record.email = obfuscated(record.email, self.obfuscated_length)
         return True
 
+handlers = ["default", "rotating_file"] if isinstance(app_config, DevConfig) else ["default", "rotating_file", "logtail"]
+
 def configure_logging():
     logs_dir = Path(__file__).resolve().parent.parent / "logs"
     logs_dir.mkdir(parents=True, exist_ok=True)
@@ -91,24 +93,24 @@ def configure_logging():
             },
             "loggers": {
                 "api": {
-                    "handlers": ["default", "rotating_file", "logtail"],
+                    "handlers": handlers,
                     "level": "DEBUG" if is_dev else "INFO",
                     "propagate": False,
                 },
                 "uvicorn": {
-                    "handlers": ["default", "rotating_file", "logtail"],
+                    "handlers": handlers,
                     "level": "INFO",
                 },
                 "databases": {
-                    "handlers": ["default", "rotating_file", "logtail"],
+                    "handlers": handlers,
                     "level": "WARNING",
                 },
                 "aiosqlite": {
-                    "handlers": ["default", "rotating_file", "logtail"],
+                    "handlers": handlers,
                     "level": "WARNING",
                 },
                 "urllib3": {
-                    "handlers": ["default", "rotating_file", "logtail"],
+                    "handlers": handlers,
                     "level": "WARNING",
                 },
             },

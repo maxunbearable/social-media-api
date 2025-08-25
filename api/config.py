@@ -3,7 +3,6 @@ from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 class BaseConfig(BaseSettings):
     ENV_STATE: Optional[str] = None
 
@@ -16,6 +15,7 @@ class GlobalConfig(BaseConfig):
     DATABASE_URL: Optional[str] = None
     DB_FORCE_ROLL_BACK: bool = False
     LOGTAIL_API_KEY: Optional[str] = None
+    SECRET_KEY: Optional[str] = None
 
 
 class DevConfig(GlobalConfig):

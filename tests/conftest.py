@@ -25,15 +25,11 @@ def client() -> Generator:
 @pytest.fixture(autouse=True)
 async def db() -> AsyncGenerator:
     await database.connect()
-    yield
-    await database.disconnect()
-
-
-@pytest.fixture(autouse=True)
-async def clean_db() -> AsyncGenerator:
     await database.execute(comment_table.delete())
     await database.execute(post_table.delete())
+    await database.execute(user_table.delete())
     yield
+    await database.disconnect()
 
 
 @pytest.fixture()
@@ -42,7 +38,7 @@ async def async_client(client) -> AsyncGenerator:
         yield ac
 
 @pytest.fixture()
-async def register_user(async_client) -> dict:
+async def registered_user(async_client) -> dict:
     user_details = { "email": "test@test.com", "password": "test" }
     await async_client.post("/register", json=user_details)
     query = select(user_table).where(user_table.c.email == user_details["email"])

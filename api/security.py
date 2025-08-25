@@ -4,10 +4,10 @@ import logging
 from fastapi import HTTPException
 from sqlalchemy import select
 from passlib.context import CryptContext
-from jose import jwt
+from jose import ExpiredSignatureError, JWTError, jwt
 
-from api import config, database
-from api.database import user_table
+from api.database import database, user_table
+from api.config import get_config
 from api.models.user import User
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ def create_access_token(email: str) -> str:
         "sub": email,
         "exp": expire
     }
-    encoded_jwt = jwt.encode(jwt_data, key=config.SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(jwt_data, key=get_config().SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 def hash_password(password: str) -> str:
@@ -39,9 +39,9 @@ async def authenticate_user(email: str, password: str) -> User:
     logger.debug("Authenticating user", extra={"email": email})
     user = await get_user(email)
     if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise HTTPException(status_code=401, detail="Invalid credentials", headers={"WWW-Authenticate": "Bearer"})
     if not verify_password(password, user.password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise HTTPException(status_code=401, detail="Invalid credentials", headers={"WWW-Authenticate": "Bearer"})
     return user
 
 async def get_user(email: str):
@@ -51,3 +51,18 @@ async def get_user(email: str):
     result = await database.fetch_one(query)
     if result:
         return result
+    
+async def get_current_user(token: str):
+    try:
+        payload = jwt.decode(token, key=get_config().SECRET_KEY, algorithms=[ALGORITHM])
+        email = payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"})
+        user = await get_user(email)
+        if user is None:
+            raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"})
+        return user
+    except ExpiredSignatureError as e:
+        raise HTTPException(status_code=401, detail="Token expired", headers={"WWW-Authenticate": "Bearer"}) from e
+    except JWTError as e:
+        raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"}) from e

@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import logging
 
 from fastapi import HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from passlib.context import CryptContext
 from jose import ExpiredSignatureError, JWTError, jwt
@@ -13,6 +14,8 @@ from api.models.user import User
 logger = logging.getLogger(__name__)
 
 ALGORITHM = "HS256"
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 pwd_context = CryptContext(schemes=["bcrypt"])
 

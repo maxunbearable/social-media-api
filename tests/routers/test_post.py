@@ -1,34 +1,41 @@
 import pytest
 from httpx import AsyncClient
 
+from api import security
 
-async def create_post(body: str, async_client: AsyncClient) -> dict:
+
+async def create_post(body: str, async_client: AsyncClient, logged_in_token: str) -> dict:
     response = await async_client.post(
         "/post",
+        headers={"Authorization": f"Bearer {logged_in_token}"},
         json={"body": body},
     )
     return response.json()
 
 
 @pytest.fixture()
-async def created_post(async_client: AsyncClient):
-    return await create_post("Test Post", async_client)
-
+async def created_post(async_client: AsyncClient, logged_in_token: str):
+    return await create_post("Test Post", async_client, logged_in_token)
 
 @pytest.fixture()
-async def created_comment(async_client: AsyncClient, created_post: dict):
+async def created_comment(async_client: AsyncClient, created_post: dict, logged_in_token: str):
+    return await create_comment("Test Comment", async_client, created_post, logged_in_token)
+
+async def create_comment(async_client: AsyncClient, created_post: dict, logged_in_token: str):
     response = await async_client.post(
         "/comment",
+        headers={"Authorization": f"Bearer {logged_in_token}"},
         json={"body": "Test Comment", "post_id": created_post["id"]},
     )
     return response.json()
 
 
 @pytest.mark.anyio
-async def test_create_post(async_client: AsyncClient):
+async def test_create_post(async_client: AsyncClient, logged_in_token: str):
     body = "Test Post"
     response = await async_client.post(
         "/post",
+        headers={"Authorization": f"Bearer {logged_in_token}"},
         json={"body": body},
     )
     assert response.status_code == 201
@@ -37,11 +44,23 @@ async def test_create_post(async_client: AsyncClient):
     assert "id" in data
     assert isinstance(data["id"], int)
 
-
 @pytest.mark.anyio
-async def test_create_post_missing_data(async_client: AsyncClient):
+async def test_create_post_expired_token(async_client: AsyncClient, registered_user: dict, mocker):
+    mocker.patch("api.security.access_token_expires_minutes", return_value=-1)
+    logged_in_token = security.create_access_token(registered_user["email"])
     response = await async_client.post(
         "/post",
+        headers={"Authorization": f"Bearer {logged_in_token}"},
+        json={"body": "Test Post"},
+    )
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Token has expired"
+
+@pytest.mark.anyio
+async def test_create_post_missing_data(async_client: AsyncClient, logged_in_token: str):
+    response = await async_client.post(
+        "/post",
+        headers={"Authorization": f"Bearer {logged_in_token}"},
         json={},
     )
     assert response.status_code == 422
@@ -62,11 +81,13 @@ async def test_get_all_posts(async_client: AsyncClient, created_post: dict):
 async def test_create_comment(
     async_client: AsyncClient,
     created_post: dict,
+    logged_in_token: str,
 ):
     body = "Test Comment"
 
     response = await async_client.post(
         "/comment",
+        headers={"Authorization": f"Bearer {logged_in_token}"},
         json={"body": body, "post_id": created_post["id"]},
     )
     assert response.status_code == 201

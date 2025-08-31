@@ -9,6 +9,7 @@ post_table = Table(
     metadata,
     Column("id", Integer, primary_key=True),
     Column("body", String, nullable=False),
+    Column("user_id", Integer, ForeignKey("users.id"), nullable=False),
 )
 
 comment_table = Table(
@@ -17,6 +18,7 @@ comment_table = Table(
     Column("id", Integer, primary_key=True),
     Column("body", String, nullable=False),
     Column("post_id", Integer, ForeignKey("posts.id"), nullable=False),
+    Column("user_id", Integer, ForeignKey("users.id"), nullable=False),
 )
 
 user_table = Table(

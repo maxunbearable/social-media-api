@@ -14,7 +14,9 @@ class CommentInput(BaseModel):
 class Comment(CommentInput):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    user_id: int
 
 class UserPostWithComments(BaseModel):
     post: UserPost
+    user_id: int
     comments: list[Comment]

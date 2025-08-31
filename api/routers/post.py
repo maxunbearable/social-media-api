@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 import logging
 from api.models.post import Comment, CommentInput, UserPost, UserPostInput, UserPostWithComments
 from api.database import post_table, comment_table, database

@@ -1,8 +1,10 @@
-from fastapi import APIRouter, HTTPException, Request
+from typing import Annotated
+from fastapi import APIRouter, Depends, HTTPException, Request
 import logging
 from api.models.post import Comment, CommentInput, UserPost, UserPostInput, UserPostWithComments
 from api.database import post_table, comment_table, database
-from api.security import get_current_user, oauth2_scheme
+from api.models.user import User
+from api.security import get_current_user
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -14,9 +16,8 @@ async def find_post(post_id: int) -> UserPost | None:
     return await database.fetch_one(query)
 
 @router.post("/comment", response_model=Comment, status_code=201)
-async def create_comment(comment: CommentInput, request: Request):
+async def create_comment(comment: CommentInput, current_user: Annotated[User, Depends(get_current_user)]):
     logger.info(f"Creating comment for post_id: {comment.post_id}")
-    current_user = await get_current_user(await oauth2_scheme(request))
     post_id = comment.post_id
     post = await find_post(post_id)
     if not post:
@@ -39,9 +40,8 @@ async def get_comments(post_id: int):
     return await database.fetch_all(query)
 
 @router.post("/post", response_model=UserPost, status_code=201)
-async def create_post(post: UserPostInput, request: Request):
+async def create_post(post: UserPostInput, current_user: Annotated[User, Depends(get_current_user)]):
     logger.info(f"Creating post: {post}")
-    current_user = await get_current_user(await oauth2_scheme(request))
     data = post.model_dump()
     query = post_table.insert().values(data)
     logger.debug(query)

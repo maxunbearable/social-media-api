@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 import logging
+from typing import Annotated
 
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from passlib.context import CryptContext
@@ -55,7 +56,7 @@ async def get_user(email: str):
     if result:
         return result
     
-async def get_current_user(token: str):
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     try:
         payload = jwt.decode(token, key=get_config().SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")

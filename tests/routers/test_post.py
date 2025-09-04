@@ -190,3 +190,9 @@ async def test_like_post(async_client: AsyncClient, created_post: dict, logged_i
     assert data["user_id"] == registered_user["id"]
     assert "id" in data
     assert isinstance(data["id"], int)
+    
+@pytest.mark.anyio
+async def test_like_post_missing_post(async_client: AsyncClient, logged_in_token: str):
+    response = await like_post(async_client, 999, logged_in_token)
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Post not found"

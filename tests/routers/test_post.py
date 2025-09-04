@@ -132,8 +132,10 @@ async def test_get_post_with_comments(
     data = response.json()
     assert "post" in data
     assert "comments" in data
+    assert "likes" in data["post"]
     assert data["post"]["body"] == created_post["body"]
     assert data["post"]["id"] == created_post["id"]
+    assert data["post"]["likes"] == 0
     assert len(data["comments"]) == 1
     assert data["comments"][0]["body"] == created_comment["body"]
     assert data["comments"][0]["id"] == created_comment["id"]

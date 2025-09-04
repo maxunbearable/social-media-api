@@ -6,6 +6,12 @@ class UserPostInput(BaseModel):
 class UserPost(UserPostInput):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    
+class UserPostWithLikes(UserPost):
+    likes: int
+    
+    class Config:
+        orm_mode = True
 
 class CommentInput(BaseModel):
     body: str
@@ -17,7 +23,7 @@ class Comment(CommentInput):
     user_id: int
 
 class UserPostWithComments(BaseModel):
-    post: UserPost
+    post: UserPostWithLikes
     user_id: int
     comments: list[Comment]
     

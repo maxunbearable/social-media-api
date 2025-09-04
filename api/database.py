@@ -21,6 +21,14 @@ comment_table = Table(
     Column("user_id", Integer, ForeignKey("users.id"), nullable=False),
 )
 
+like_table = Table(
+    "likes",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("post_id", Integer, ForeignKey("posts.id"), nullable=False),
+    Column("user_id", Integer, ForeignKey("users.id"), nullable=False),
+)
+
 user_table = Table(
     "users",
     metadata,

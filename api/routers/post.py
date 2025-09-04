@@ -1,8 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 import logging
-from api.models.post import Comment, CommentInput, UserPost, UserPostInput, UserPostWithComments
-from api.database import post_table, comment_table, database
+from api.models.post import Comment, CommentInput, PostLike, PostLikeIn, UserPost, UserPostInput, UserPostWithComments
+from api.database import like_table, post_table, comment_table, database
 from api.models.user import User
 from api.security import get_current_user
 
@@ -63,3 +63,15 @@ async def get_posts():
     query = post_table.select()
     logger.info(query)
     return await database.fetch_all(query)
+
+@router.post("/like", response_model=PostLike, status_code=201)
+async def like_post(like: PostLikeIn, current_user: Annotated[User, Depends(get_current_user)]):
+    logger.info(f"Liking post with id: {like.post_id}")
+    post = await find_post(like.post_id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    data = { **like.model_dump(), "user_id": current_user.id }
+    query = like_table.insert().values(data)
+    logger.debug(query)
+    like_id = await database.execute(query)
+    return {**data, "id": like_id}

@@ -12,6 +12,14 @@ async def create_post(body: str, async_client: AsyncClient, logged_in_token: str
     )
     return response.json()
 
+async def like_post(async_client: AsyncClient, post_id: int, logged_in_token: str) -> dict:
+    response = await async_client.post(
+        "/like",
+        headers={"Authorization": f"Bearer {logged_in_token}"},
+        json={"post_id": post_id},
+    )
+    return response.json()
+
 
 @pytest.fixture()
 async def created_post(async_client: AsyncClient, logged_in_token: str):
@@ -137,3 +145,13 @@ async def test_get_missing_post_with_comments(
 ):
     response = await async_client.get("/post/999")
     assert response.status_code == 404
+
+@pytest.mark.anyio
+async def test_like_post(async_client: AsyncClient, created_post: dict, logged_in_token: str, registered_user: dict):
+    response = await like_post(async_client, created_post["id"], logged_in_token)
+    assert response.status_code == 201
+    data = response.json()
+    assert data["post_id"] == created_post["id"]
+    assert data["user_id"] == registered_user["id"]
+    assert "id" in data
+    assert isinstance(data["id"], int)

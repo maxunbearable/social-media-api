@@ -23,12 +23,28 @@ pwd_context = CryptContext(schemes=["bcrypt"])
 def access_token_expires_minutes() -> int:
     return 30
 
+def confirm_token_expires_minutes() -> int:
+    return 1440
+
 def create_access_token(email: str) -> str:
     logger.debug("Creating access token", extra={"email": email})
     expire = datetime.utcnow() + timedelta(minutes=access_token_expires_minutes())
     jwt_data = {
         "sub": email,
-        "exp": expire
+        "exp": expire,
+        "type": "access"
+    }
+    encoded_jwt = jwt.encode(jwt_data, key=get_config().SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+def create_confirmation_token(email: str) -> str:
+    logger.debug("Creating confirm token", extra={"email": email})
+    expire = datetime.utcnow() + timedelta(minutes=confirm_token_expires_minutes())
+    jwt_data = {
+        "sub": email,
+        "exp": expire,
+        "type": "confirm"
     }
     encoded_jwt = jwt.encode(jwt_data, key=get_config().SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -60,6 +76,9 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     try:
         payload = jwt.decode(token, key=get_config().SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")
+        token_type = payload.get("type")
+        if token_type is None or token_type != "access":
+            raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"})
         if email is None:
             raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"})
         user = await get_user(email)

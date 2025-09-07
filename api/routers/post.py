@@ -59,7 +59,7 @@ async def create_post(post: UserPostInput, current_user: Annotated[User, Depends
     query = post_table.insert().values(data)
     logger.debug(query)
     post_id = await database.execute(query)
-    return {**data, "id": post_id}
+    return {**data, "id": post_id, "likes": 0}
 
 @router.get("/post/{post_id}", response_model=UserPostWithComments)
 async def get_post_with_comments(post_id: int):
@@ -79,9 +79,9 @@ async def get_posts(sorting: PostSorting = PostSorting.new):
         case PostSorting.most_likes:
             order_by = desc("likes")
         case PostSorting.new:
-            order_by = desc("id")
+            order_by = desc(post_table.c.id)
         case PostSorting.old:
-            order_by = asc("id")
+            order_by = asc(post_table.c.id)
     query = select_post_with_likes.order_by(order_by)
     logger.debug(query)
     return await database.fetch_all(query)

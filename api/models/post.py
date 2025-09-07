@@ -6,6 +6,8 @@ class UserPostInput(BaseModel):
 class UserPost(UserPostInput):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    user_id: int
+    likes: int = 0
     
 class UserPostWithLikes(UserPost):
     likes: int
@@ -24,7 +26,6 @@ class Comment(CommentInput):
 
 class UserPostWithComments(BaseModel):
     post: UserPostWithLikes
-    user_id: int
     comments: list[Comment]
     
 class PostLikeIn(BaseModel):

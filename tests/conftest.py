@@ -5,7 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.sql import select
-from api.database import database, post_table, comment_table, user_table
+from api.database import database, post_table, comment_table, user_table, like_table
 
 os.environ["ENV_STATE"] = "test"
 
@@ -26,6 +26,7 @@ def client() -> Generator:
 async def db() -> AsyncGenerator:
     await database.connect()
     await database.execute(comment_table.delete())
+    await database.execute(like_table.delete())
     await database.execute(post_table.delete())
     await database.execute(user_table.delete())
     yield
@@ -48,5 +49,5 @@ async def registered_user(async_client) -> dict:
 
 @pytest.fixture()
 async def logged_in_token(async_client, registered_user: dict) -> str:
-    response = await async_client.post("/token", json=registered_user)
+    response = await async_client.post("/token", data={"username": registered_user["email"], "password": registered_user["password"]})
     return response.json()["access_token"]

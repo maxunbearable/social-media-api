@@ -86,6 +86,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
             raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"})
         return user
     except ExpiredSignatureError as e:
-        raise HTTPException(status_code=401, detail="Token expired", headers={"WWW-Authenticate": "Bearer"}) from e
+        raise HTTPException(status_code=401, detail="Token has expired", headers={"WWW-Authenticate": "Bearer"}) from e
     except JWTError as e:
         raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"}) from e

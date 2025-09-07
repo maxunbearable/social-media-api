@@ -12,13 +12,13 @@ async def create_post(body: str, async_client: AsyncClient, logged_in_token: str
     )
     return response.json()
 
-async def like_post(async_client: AsyncClient, post_id: int, logged_in_token: str) -> dict:
+async def like_post(async_client: AsyncClient, post_id: int, logged_in_token: str):
     response = await async_client.post(
         "/like",
         headers={"Authorization": f"Bearer {logged_in_token}"},
         json={"post_id": post_id},
     )
-    return response.json()
+    return response
 
 
 @pytest.fixture()
@@ -29,11 +29,11 @@ async def created_post(async_client: AsyncClient, logged_in_token: str):
 async def created_comment(async_client: AsyncClient, created_post: dict, logged_in_token: str):
     return await create_comment("Test Comment", async_client, created_post, logged_in_token)
 
-async def create_comment(async_client: AsyncClient, created_post: dict, logged_in_token: str):
+async def create_comment(body: str, async_client: AsyncClient, created_post: dict, logged_in_token: str):
     response = await async_client.post(
         "/comment",
         headers={"Authorization": f"Bearer {logged_in_token}"},
-        json={"body": "Test Comment", "post_id": created_post["id"]},
+        json={"body": body, "post_id": created_post["id"]},
     )
     return response.json()
 
@@ -89,7 +89,7 @@ async def test_get_all_posts(async_client: AsyncClient, created_post: dict):
     
 @pytest.mark.anyio
 @pytest.mark.parametrize(
-    "sorting", "expected_order", [
+    "sorting,expected_order", [
         ("new", [2, 1]),
         ("old", [1, 2]),
     ]

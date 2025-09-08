@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import logging
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -49,6 +49,21 @@ def create_confirmation_token(email: str) -> str:
     encoded_jwt = jwt.encode(jwt_data, key=get_config().SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+def get_subject_for_token_type(token: str, token_type: Literal["access", "confirm"]) -> str:
+    try:
+        payload = jwt.decode(token, key=get_config().SECRET_KEY, algorithms=[ALGORITHM])
+    except ExpiredSignatureError as e:
+        raise HTTPException(status_code=401, detail="Token has expired", headers={"WWW-Authenticate": "Bearer"}) from e
+    except JWTError as e:
+        raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"}) from e
+    email = payload.get("sub")
+    token_type = payload.get("type")
+    if token_type is None or token_type != token_type:
+        raise HTTPException(status_code=401, detail=f"Invalid token type, expected {token_type}", headers={"WWW-Authenticate": "Bearer"})
+    if email is None:
+        raise HTTPException(status_code=401, detail="Token subject is missing", headers={"WWW-Authenticate": "Bearer"})
+    return email
+
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
@@ -73,19 +88,8 @@ async def get_user(email: str):
         return result
     
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    try:
-        payload = jwt.decode(token, key=get_config().SECRET_KEY, algorithms=[ALGORITHM])
-        email = payload.get("sub")
-        token_type = payload.get("type")
-        if token_type is None or token_type != "access":
-            raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"})
-        if email is None:
-            raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"})
-        user = await get_user(email)
-        if user is None:
-            raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"})
-        return user
-    except ExpiredSignatureError as e:
-        raise HTTPException(status_code=401, detail="Token has expired", headers={"WWW-Authenticate": "Bearer"}) from e
-    except JWTError as e:
-        raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"}) from e
+    email = get_subject_for_token_type(token, "access")
+    user = await get_user(email)
+    if user is None:
+        raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"})
+    return user

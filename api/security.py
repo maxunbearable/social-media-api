@@ -57,8 +57,8 @@ def get_subject_for_token_type(token: str, token_type: Literal["access", "confir
     except JWTError as e:
         raise HTTPException(status_code=401, detail="Invalid token", headers={"WWW-Authenticate": "Bearer"}) from e
     email = payload.get("sub")
-    token_type = payload.get("type")
-    if token_type is None or token_type != token_type:
+    payload_token_type = payload.get("type")
+    if payload_token_type is None or payload_token_type != token_type:
         raise HTTPException(status_code=401, detail=f"Invalid token type, expected {token_type}", headers={"WWW-Authenticate": "Bearer"})
     if email is None:
         raise HTTPException(status_code=401, detail="Token subject is missing", headers={"WWW-Authenticate": "Bearer"})

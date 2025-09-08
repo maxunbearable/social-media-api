@@ -3,7 +3,7 @@ import pytest
 from jose import jwt
 
 from api.config import get_config
-from api.security import ALGORITHM, access_token_expires_minutes, authenticate_user, confirm_token_expires_minutes, create_access_token, create_confirmation_token, get_current_user, get_user, hash_password, verify_password
+from api.security import ALGORITHM, access_token_expires_minutes, authenticate_user, confirm_token_expires_minutes, create_access_token, create_confirmation_token, get_current_user, get_subject_for_token_type, get_user, hash_password, verify_password
 
 @pytest.mark.anyio
 async def test_get_user(registered_user):
@@ -80,4 +80,52 @@ async def test_get_current_user_wrong_token_type():
     with pytest.raises(HTTPException) as e:
         await get_current_user(token)
     assert e.value.status_code == 401
+    assert e.value.detail == "Invalid token type, expected access"
+
+@pytest.mark.anyio
+async def test_get_subject_for_token_confirm():
+    token = create_confirmation_token("test@test.com")
+    email = get_subject_for_token_type(token, "confirm")
+    assert email == "test@test.com"
+    
+@pytest.mark.anyio
+async def test_get_subject_for_token_access():
+    token = create_access_token("test@test.com")
+    email = get_subject_for_token_type(token, "access")
+    assert email == "test@test.com"
+    
+@pytest.mark.anyio
+async def test_get_subject_for_token_invalid_token_type():
+    token = create_access_token("test@test.com")
+    with pytest.raises(HTTPException) as e:
+        get_subject_for_token_type(token, "invalid")
+    assert e.value.status_code == 401
+    assert e.value.detail == "Invalid token type, expected invalid"
+    
+@pytest.mark.anyio
+async def test_get_subject_for_token_invalid_token():
+    token = "Invalid token"
+    with pytest.raises(HTTPException) as e:
+        get_subject_for_token_type(token, "access")
+    assert e.value.status_code == 401
     assert e.value.detail == "Invalid token"
+
+@pytest.mark.anyio
+async def test_get_subject_for_token_type_expired(mocker):
+    mocker.patch("api.security.access_token_expires_minutes", return_value=-1)
+    token = create_access_token("test@test.com")
+    with pytest.raises(HTTPException) as e:
+        get_subject_for_token_type(token, "access")
+    assert e.value.status_code == 401
+    assert e.value.detail == "Token has expired"
+
+@pytest.mark.anyio
+async def test_get_subject_for_token_type_missing_token_subject():
+    token = create_access_token("test@test.com")
+    payload = jwt.decode(token, key=get_config().SECRET_KEY, algorithms=[ALGORITHM])
+    del payload["sub"]
+    token = jwt.encode(payload, key=get_config().SECRET_KEY, algorithm=ALGORITHM)
+    with pytest.raises(HTTPException) as e:
+        get_subject_for_token_type(token, "access")
+    assert e.value.status_code == 401
+    assert e.value.detail == "Token subject is missing"

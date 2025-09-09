@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, MetaData, String, Table, create_engine
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, MetaData, String, Table, create_engine
 import databases
 from api.config import config
 
@@ -35,6 +35,7 @@ user_table = Table(
     Column("id", Integer, primary_key=True),
     Column("email", String, unique=True, nullable=False),
     Column("password", String, nullable=False),
+    Column("confirmed", Boolean, nullable=False, default=False),
 )
 
 engine = create_engine(config.DATABASE_URL, connect_args={"check_same_thread": False})

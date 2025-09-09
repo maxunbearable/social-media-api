@@ -1,3 +1,4 @@
+from fastapi import Request
 import pytest
 
 @pytest.mark.anyio
@@ -8,7 +9,7 @@ async def register_user(async_client, email: str, password: str) -> dict:
 async def test_register_user(async_client):
     response = await register_user(async_client, "test@test.com", "test")
     assert response.status_code == 201
-    assert "User registered successfully" in response.json()["detail"]
+    assert "Please check your email for a confirmation link" in response.json()["detail"]
 
 @pytest.mark.anyio
 async def test_register_user_already_exists(async_client, registered_user):
@@ -29,3 +30,18 @@ async def test_login_user_invalid_credentials(async_client):
     response = await async_client.post("/token", data={"username": "test@test.com", "password": "test"})
     assert response.status_code == 401
     assert "Invalid credentials" in response.json()["detail"]
+    
+@pytest.mark.anyio
+async def test_confirm_email(async_client, mocker):
+    spy = mocker.spy(Request, "url_for")
+    await register_user(async_client, "test@test.com", "test")
+    confirmation_url = str(spy.spy_return)
+    response = await async_client.get(confirmation_url)
+    assert response.status_code == 200
+    assert "User confirmed successfully" in response.json()["detail"]
+    
+@pytest.mark.anyio
+async def test_confirm_email_invalid_token(async_client):
+    response = await async_client.get("/confirm/invalid_token")
+    assert response.status_code == 401
+    assert "Invalid token" in response.json()["detail"]

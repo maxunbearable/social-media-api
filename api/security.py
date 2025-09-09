@@ -77,6 +77,8 @@ async def authenticate_user(email: str, password: str) -> User:
         raise HTTPException(status_code=401, detail="Invalid credentials", headers={"WWW-Authenticate": "Bearer"})
     if not verify_password(password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials", headers={"WWW-Authenticate": "Bearer"})
+    if not user.confirmed:
+        raise HTTPException(status_code=401, detail="User not confirmed", headers={"WWW-Authenticate": "Bearer"})
     return user
 
 async def get_user(email: str):

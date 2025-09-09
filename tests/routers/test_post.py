@@ -39,7 +39,7 @@ async def create_comment(body: str, async_client: AsyncClient, created_post: dic
 
 
 @pytest.mark.anyio
-async def test_create_post(async_client: AsyncClient, logged_in_token: str, registered_user: dict):
+async def test_create_post(async_client: AsyncClient, logged_in_token: str, confirmed_user: dict):
     body = "Test Post"
     response = await async_client.post(
         "/post",
@@ -50,14 +50,14 @@ async def test_create_post(async_client: AsyncClient, logged_in_token: str, regi
     data = response.json()
     assert data["body"] == body
     assert data["likes"] == 0
-    assert data["user_id"] == registered_user["id"]
+    assert data["user_id"] == confirmed_user["id"]
     assert "id" in data
     assert isinstance(data["id"], int)
 
 @pytest.mark.anyio
-async def test_create_post_expired_token(async_client: AsyncClient, registered_user: dict, mocker):
+async def test_create_post_expired_token(async_client: AsyncClient, confirmed_user: dict, mocker):
     mocker.patch("api.security.access_token_expires_minutes", return_value=-1)
-    logged_in_token = security.create_access_token(registered_user["email"])
+    logged_in_token = security.create_access_token(confirmed_user["email"])
     response = await async_client.post(
         "/post",
         headers={"Authorization": f"Bearer {logged_in_token}"},
@@ -124,7 +124,7 @@ async def test_create_comment(
     async_client: AsyncClient,
     created_post: dict,
     logged_in_token: str,
-    registered_user: dict,
+    confirmed_user: dict,
 ):
     body = "Test Comment"
 
@@ -137,7 +137,7 @@ async def test_create_comment(
     data = response.json()
     assert data["body"] == body
     assert data["post_id"] == created_post["id"]
-    assert data["user_id"] == registered_user["id"]
+    assert data["user_id"] == confirmed_user["id"]
     assert "id" in data
     assert isinstance(data["id"], int)
 
@@ -182,12 +182,12 @@ async def test_get_missing_post_with_comments(
     assert response.status_code == 404
 
 @pytest.mark.anyio
-async def test_like_post(async_client: AsyncClient, created_post: dict, logged_in_token: str, registered_user: dict):
+async def test_like_post(async_client: AsyncClient, created_post: dict, logged_in_token: str, confirmed_user: dict):
     response = await like_post(async_client, created_post["id"], logged_in_token)
     assert response.status_code == 201
     data = response.json()
     assert data["post_id"] == created_post["id"]
-    assert data["user_id"] == registered_user["id"]
+    assert data["user_id"] == confirmed_user["id"]
     assert "id" in data
     assert isinstance(data["id"], int)
     

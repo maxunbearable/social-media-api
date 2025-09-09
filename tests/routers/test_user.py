@@ -20,8 +20,8 @@ async def test_register_user_already_exists(async_client, registered_user):
     assert "Email already registered" in response.json()["detail"]
     
 @pytest.mark.anyio
-async def test_login_user(async_client, registered_user):
-    response = await async_client.post("/token", data={"username": registered_user["email"], "password": "test"})
+async def test_login_user(async_client, confirmed_user):
+    response = await async_client.post("/token", data={"username": confirmed_user["email"], "password": "test"})
     assert response.status_code == 200
     assert "access_token" in response.json()
     assert "token_type" in response.json()
@@ -55,3 +55,9 @@ async def test_confirm_email_token_expired(async_client, mocker):
     response = await async_client.get(f"/confirm/{token}")
     assert response.status_code == 401
     assert "Token has expired" in response.json()["detail"]
+    
+@pytest.mark.anyio
+async def test_user_not_confirmed(async_client, registered_user):
+    response = await async_client.post("/token", data={"username": registered_user["email"], "password": "test"})
+    assert response.status_code == 401
+    assert "User not confirmed" in response.json()["detail"]

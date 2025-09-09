@@ -6,9 +6,9 @@ from api.config import get_config
 from api.security import ALGORITHM, access_token_expires_minutes, authenticate_user, confirm_token_expires_minutes, create_access_token, create_confirmation_token, get_current_user, get_subject_for_token_type, get_user, hash_password, verify_password
 
 @pytest.mark.anyio
-async def test_get_user(registered_user):
-    user = await get_user(registered_user["email"])
-    assert user.email == registered_user["email"]
+async def test_get_user(confirmed_user):
+    user = await get_user(confirmed_user["email"])
+    assert user.email == confirmed_user["email"]
 
 @pytest.mark.anyio
 async def test_get_user_not_found():
@@ -43,9 +43,9 @@ def test_confirm_token_expires_minutes():
     assert confirm_token_expires_minutes() == 1440
     
 @pytest.mark.anyio
-async def test_authenticate_user(registered_user):
-    user = await authenticate_user(registered_user["email"], "test")
-    assert user.email == registered_user["email"]
+async def test_authenticate_user(confirmed_user):
+    user = await authenticate_user(confirmed_user["email"], "test")
+    assert user.email == confirmed_user["email"]
     
 @pytest.mark.anyio
 async def test_authenticate_user_invalid_credentials():
@@ -62,10 +62,10 @@ async def test_authenticate_user_not_found():
     assert e.value.detail == "Invalid credentials"
     
 @pytest.mark.anyio
-async def test_get_current_user(registered_user):
-    token = create_access_token(registered_user["email"])
+async def test_get_current_user(confirmed_user):
+    token = create_access_token(confirmed_user["email"])
     user = await get_current_user(token)
-    assert user.email == registered_user["email"]
+    assert user.email == confirmed_user["email"]
     
 @pytest.mark.anyio
 async def test_get_current_user_invalid_token():

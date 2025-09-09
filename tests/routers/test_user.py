@@ -1,6 +1,8 @@
 from fastapi import Request
 import pytest
 
+from api.security import create_confirmation_token
+
 @pytest.mark.anyio
 async def register_user(async_client, email: str, password: str) -> dict:
     return await async_client.post("/register", json={"email": email, "password": password})
@@ -45,3 +47,11 @@ async def test_confirm_email_invalid_token(async_client):
     response = await async_client.get("/confirm/invalid_token")
     assert response.status_code == 401
     assert "Invalid token" in response.json()["detail"]
+    
+@pytest.mark.anyio
+async def test_confirm_email_token_expired(async_client, mocker):
+    mocker.patch("api.security.confirm_token_expires_minutes", return_value=-1)
+    token = create_confirmation_token("test@test.com")
+    response = await async_client.get(f"/confirm/{token}")
+    assert response.status_code == 401
+    assert "Token has expired" in response.json()["detail"]

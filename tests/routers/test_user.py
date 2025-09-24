@@ -1,3 +1,4 @@
+from fastapi import BackgroundTasks
 import pytest
 
 from api import tasks
@@ -35,7 +36,7 @@ async def test_login_user_invalid_credentials(async_client):
     
 @pytest.mark.anyio
 async def test_confirm_email(async_client, mocker):
-    spy = mocker.spy(tasks, "send_confirmation_email")
+    spy = mocker.spy(BackgroundTasks, "add_task")
     await register_user(async_client, "test@test.com", "test")
     confirmation_url = str(spy.call_args[1]["confirmation_url"])
     response = await async_client.get(confirmation_url)

@@ -1,6 +1,6 @@
-from fastapi import Request
 import pytest
 
+from api import tasks
 from api.security import create_confirmation_token
 
 @pytest.mark.anyio
@@ -35,9 +35,9 @@ async def test_login_user_invalid_credentials(async_client):
     
 @pytest.mark.anyio
 async def test_confirm_email(async_client, mocker):
-    spy = mocker.spy(Request, "url_for")
+    spy = mocker.spy(tasks, "send_confirmation_email")
     await register_user(async_client, "test@test.com", "test")
-    confirmation_url = str(spy.spy_return)
+    confirmation_url = str(spy.call_args[1]["confirmation_url"])
     response = await async_client.get(confirmation_url)
     assert response.status_code == 200
     assert "User confirmed successfully" in response.json()["detail"]

@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 
+from api import tasks
 from api.database import database, user_table
 from api.models.user import UserIn
 from api.security import authenticate_user, create_access_token, create_confirmation_token, get_subject_for_token_type, get_user, hash_password
@@ -17,8 +18,8 @@ async def register(user: UserIn, request: Request):
     query = user_table.insert().values(email=user.email, password=hash_password(user.password), confirmed=False)
     logger.debug(query)
     await database.execute(query)
-    return {"detail": "Please check your email for a confirmation link", 
-            "url": request.url_for("confirm_email", token=create_confirmation_token(user.email))}
+    await tasks.send_confirmation_email(user.email, request.url_for("confirm_email", token=create_confirmation_token(user.email)))
+    return {"detail": "Please check your email for a confirmation link"}
 
 @router.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):

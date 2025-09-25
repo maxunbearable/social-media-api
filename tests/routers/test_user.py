@@ -62,3 +62,10 @@ async def test_user_not_confirmed(async_client, registered_user):
     response = await async_client.post("/token", data={"username": registered_user["email"], "password": "test"})
     assert response.status_code == 401
     assert "User not confirmed" in response.json()["detail"]
+
+@pytest.mark.anyio
+async def test_confirm_already_confirmed_email(async_client, confirmed_user):
+    token = create_confirmation_token(confirmed_user["email"])
+    response = await async_client.get(f"/confirm/{token}")
+    assert response.status_code == 400
+    assert "Email already confirmed" in response.json()["detail"]

@@ -29,6 +29,11 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 @router.get("/confirm/{token}")
 async def confirm_email(token: str):
     email = get_subject_for_token_type(token, "confirm")
+    user = await get_user(email)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    if user.confirmed:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already confirmed")
     query = user_table.update().where(user_table.c.email == email).values(confirmed=True)
     logger.debug(query)
     await database.execute(query)
